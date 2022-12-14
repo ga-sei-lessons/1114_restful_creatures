@@ -10,8 +10,13 @@ app.use(express.urlencoded({extended: false}))
 // GET localhost:3000/dinosaurs
 app.get("/dinosaurs", function(req, res) {
     const dinosaurs = fs.readFileSync("./dinosaurs.json")
-    const dinoData = JSON.parse(dinosaurs)
-    console.log(dinoData)
+    let dinoData = JSON.parse(dinosaurs)
+    // console.log(dinoData)
+    const nameFilter = req.query.nameFilter
+    if(nameFilter) {
+        dinoData = dinoData.filter(dino => dino.name.toLowerCase() === nameFilter.toLowerCase())
+    }
+    console.log("data", dinoData)
     res.render("dinosaurs/index", {myDinos: dinoData})
 })
 
