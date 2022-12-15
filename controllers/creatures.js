@@ -41,4 +41,53 @@ router.get("/:idx", function(req, res) {
     res.render("creatures/show", {creature: creatureData[idx]})
 })
 
+// DELETE localhost:3000/creatures/:id
+router.delete('/:idx', (req, res) => {
+    // read and parse our creature data
+    const creatures = fs.readFileSync('./prehistoric_creatures.json')
+    const creatureData = JSON.parse(creatures)
+
+    // remove the creature indicated by the req.params from the creature array
+    const creatureIndex = Number(req.params.idx)
+    // console.log(creatureIndex)
+    // array.splice(starting index to remove, how many indexes to remove)
+    creatureData.splice(creatureIndex, 1) // only remove on item starting req.params.idx
+
+    // save the creature data
+    fs.writeFileSync('./prehistoric_creatures.json', JSON.stringify(creatureData))
+
+    // redirect to /creatures to show the user that the creature has been deleted
+    res.redirect('/creatures')
+})
+
+// PUT /creatures/:idx -- Edit creature at idx
+router.put('/:idx', (req, res) => {
+    // read the creature data and parse the json
+    const creatures = fs.readFileSync('./prehistoric_creatures.json')
+    const creatureData = JSON.parse(creatures)
+
+    // update the creature indicated by the req.params with the data from the req.body
+    creatureData[req.params.idx].img_url = req.body.img_url
+    creatureData[req.params.idx].type = req.body.type
+
+    // write the creature file
+    fs.writeFileSync('./prehistoric_creatures.json', JSON.stringify(creatureData))
+
+    // redirect to where the client can find update data (either /creatures or /creatures/:idx)
+    res.redirect(`/creatures/${req.params.idx}`)
+})
+
+// GET /creatures/:idx/edit -- show a form to edit a dion
+router.get('/:idx/edit', (req, res) => {
+    // look up the creature to edit from the req.params.idx
+    const creatures = fs.readFileSync('./prehistoric_creatures.json')
+    const creatureData = JSON.parse(creatures)
+
+    // render a form to edit this creature
+    res.render('creatures/edit.ejs', {
+        creature: creatureData[req.params.idx],
+        creatureId: req.params.idx
+    })
+})
+
 module.exports = router
