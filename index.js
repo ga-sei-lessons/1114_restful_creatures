@@ -8,6 +8,7 @@ app.use(express.urlencoded({extended: false}))
 
 // CONTROLLERS
 app.use("/dinosaurs", require("./controllers/dinosaurs.js"))
+app.use("/creatures", require("./controllers/creatures.js"))
 
 app.listen(PORT, function(){
     console.log("Server listening on port " + PORT)
