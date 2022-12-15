@@ -40,4 +40,23 @@ router.get("/:idx", function(req,res){
     res.render("dinosaurs/show", {myDino: dinoData[dinoIndex]})
 })
 
+// DELETE localhost:3000/dinosaurs/:id
+router.delete('/:idx', (req, res) => {
+    // read and parse our dino data
+    const dinosaurs = fs.readFileSync('./dinosaurs.json')
+    const dinoData = JSON.parse(dinosaurs)
+
+    // remove the dinosaur indicated by the req.params from the dino array
+    const dinoIndex = Number(req.params.idx)
+    // console.log(dinoIndex)
+    // array.splice(starting index to remove, how many indexes to remove)
+    dinoData.splice(dinoIndex, 1) // only remove on item starting req.params.idx
+
+    // save the dino data
+    fs.writeFileSync('./dinosaurs.json', JSON.stringify(dinoData))
+
+    // redirect to /dinosaurs to show the user that the dino has been deleted
+    res.redirect('/dinosaurs')
+})
+
 module.exports = router
