@@ -59,4 +59,34 @@ router.delete('/:idx', (req, res) => {
     res.redirect('/dinosaurs')
 })
 
+// PUT /dinosaurs/:idx -- Edit dino at idx
+router.put('/:idx', (req, res) => {
+    // read the dino data and parse the json
+    const dinosaurs = fs.readFileSync('./dinosaurs.json')
+    const dinoData = JSON.parse(dinosaurs)
+
+    // update the dino indicated by the req.params with the data from the req.body
+    dinoData[req.params.idx].name = req.body.name
+    dinoData[req.params.idx].type = req.body.type
+
+    // write the dino file
+    fs.writeFileSync('./dinosaurs.json', JSON.stringify(dinoData))
+
+    // redirect to where the client can find update data (either /dinosaurs or /dinosaurs/:idx)
+    res.redirect(`/dinosaurs/${req.params.idx}`)
+})
+
+// GET /dinosaurs/:idx/edit -- show a form to edit a dion
+router.get('/:idx/edit', (req, res) => {
+    // look up the dino to edit from the req.params.idx
+    const dinosaurs = fs.readFileSync('./dinosaurs.json')
+    const dinoData = JSON.parse(dinosaurs)
+
+    // render a form to edit this dino
+    res.render('dinosaurs/edit.ejs', {
+        dino: dinoData[req.params.idx],
+        dinoId: req.params.idx
+    })
+})
+
 module.exports = router
